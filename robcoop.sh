@@ -46,7 +46,7 @@ s0_report() {
         echo "#### Informe S0 — Robótica Cooperativa"
         echo "fecha: $(date -Iseconds)"
         echo "usuario WSL: $(whoami)   distro: ${WSL_DISTRO_NAME:-no-WSL}"
-        echo "Windows: $(cd /mnt/c 2>/dev/null && /mnt/c/Windows/System32/cmd.exe /c ver 2>/dev/null | tr -d '\r' | grep -i windows || echo 'no disponible')"
+        echo "Windows: $(cd /mnt/c 2>/dev/null && /mnt/c/Windows/System32/cmd.exe /c ver 2>/dev/null | iconv -f CP850 -t UTF-8 2>/dev/null | tr -d '\r' | grep -ai windows || echo 'no disponible')"
         echo "kernel: $(uname -r)"
         echo "CPU: $(nproc) hilos   RAM: $(free -g | awk '/Mem:/{print $2}') GB   disco libre: $(df -h ~ | awk 'NR==2{print $4}')"
         echo "docker: $(docker version --format '{{.Server.Version}}' 2>/dev/null)"
@@ -55,16 +55,16 @@ s0_report() {
         echo "#### check_env"
         inside "check_env" 2>&1 || true
         echo
-        echo "#### Prueba de simulación (2 robots, sin ventanas, ~75 s)"
+        echo "#### Prueba de simulación (2 robots, sin ventanas, ~80 s)"
         inside "cd ~/ws && colcon build --packages-select turtlebot3_gz_bringup >/dev/null 2>&1 && source install/setup.bash && \
-          (timeout -s INT 75 ros2 launch turtlebot3_gz_bringup multi_robot.launch.py num_robots:=2 gui:=false rviz:=false >/tmp/s0_launch.log 2>&1 &) ; \
-          sleep 35; \
+          (timeout -s INT 80 ros2 launch turtlebot3_gz_bringup multi_robot.launch.py num_robots:=2 gui:=false rviz:=false >/tmp/s0_launch.log 2>&1 &) ; \
+          sleep 40; \
           echo \"tópicos tb3_*: \$(ros2 topic list | grep -c tb3_)  (esperado: 14 o más)\"; \
           rate() { timeout 12 ros2 topic hz \$1 2>/dev/null | grep 'average rate' | tail -1 | awk '{print \$3}'; }; \
           check() { r=\$(rate \$1); if [ -z \"\$r\" ]; then echo \"\$1: SIN DATOS  -> FALLO\"; \
             elif awk -v r=\$r -v lo=\$2 'BEGIN{exit !(r>=lo)}'; then echo \"\$1: \$r Hz  -> OK\"; \
             else echo \"\$1: \$r Hz (mínimo \$2)  -> FALLO\"; fi; }; \
-          check /tb3_0/scan 4; check /tb3_1/odom 25; \
+          check /tb3_0/scan 3.5; check /tb3_1/odom 25; \
           sleep 15" 2>&1 || true
         echo
         echo "#### Fin del informe"

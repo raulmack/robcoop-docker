@@ -10,3 +10,6 @@ ws/src/*
 informe_s0*.txt
 *.tgz
 robot/informe_*.txt
+# Credenciales: nunca al repositorio
+token*
+*.token
