@@ -1,0 +1,23 @@
+# =============================================================================
+#  Ajustes para Docker Engine dentro de WSL2 (Windows 10/11 con WSLg)
+#  - Ventanas (RViz, Gazebo) a través de WSLg
+#  - Aceleración GPU vía D3D12 (/dev/dxg); vale para NVIDIA, Intel y AMD
+# =============================================================================
+services:
+  ros:
+    devices:
+      - /dev/dxg:/dev/dxg
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /mnt/wslg:/mnt/wslg
+      - /usr/lib/wsl:/usr/lib/wsl:ro
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - WAYLAND_DISPLAY=/mnt/wslg/runtime-dir/wayland-0
+      - XDG_RUNTIME_DIR=/tmp/runtime-ros   # propio, con permisos 0700 (evita aviso de Qt)
+      - PULSE_SERVER=/mnt/wslg/PulseServer
+      - LD_LIBRARY_PATH=/usr/lib/wsl/lib
+      - MESA_D3D12_DEFAULT_ADAPTER_NAME=${GPU_ADAPTER:-NVIDIA}
+      - LIBGL_ALWAYS_SOFTWARE=${LIBGL_ALWAYS_SOFTWARE:-0}
+      - ROBCOOP_RENDER_ENGINE=${ROBCOOP_RENDER_ENGINE-ogre}   # ogre2 necesita OpenGL 4.3 (WSL da 4.2)
+      - QT_X11_NO_MITSHM=1

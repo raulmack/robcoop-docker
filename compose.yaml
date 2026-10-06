@@ -1,0 +1,48 @@
+# =============================================================================
+#  Robótica Cooperativa — servicio base (común a WSL y Linux nativo)
+#  Los montajes específicos de cada plataforma están en compose.wsl.yaml /
+#  compose.linux.yaml y se seleccionan con COMPOSE_FILE en el fichero .env
+# =============================================================================
+services:
+  ros:
+    image: ${ROBCOOP_IMAGE:-ghcr.io/raulmack/robcoop:humble}
+    pull_policy: missing
+    build:
+      context: ./docker
+      network: host            # evita problemas de la red bridge en modo espejo
+      args:
+        USER_UID: ${HOST_UID:-1000}
+        USER_GID: ${HOST_GID:-1000}
+    container_name: robcoop
+    hostname: robcoop
+    extra_hosts:
+      - "robcoop:127.0.1.1"     # evita "sudo: unable to resolve host"
+    network_mode: host         # DDS ve la misma red que Windows (modo espejo)
+    ipc: host                  # memoria compartida de Fast DDS con otros contenedores
+    stdin_open: true
+    tty: true
+    command: sleep infinity    # el contenedor queda vivo; se entra con 'exec'
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-30}
+      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
+      - TURTLEBOT3_MODEL=${TURTLEBOT3_MODEL:-burger}
+      - LDS_MODEL=${LDS_MODEL:-LDS-01}
+    volumes:
+      - ./ws:/home/ros/ws
+
+  # ---------------------------------------------------------------------------
+  # Puente Zenoh (solo Windows 10 o redes donde DDS no llega a los robots).
+  # Usa la imagen oficial de Eclipse (no depende de la versión de Ubuntu).
+  # Se activa con:  ./robcoop.sh zenoh
+  # ZENOH_ARGS en .env, p. ej.: -e tcp/192.168.50.101:7447 -e tcp/192.168.50.102:7447
+  # ZENOH_VERSION debe coincidir con la versión del puente en los robots.
+  # ---------------------------------------------------------------------------
+  zenoh:
+    image: eclipse/zenoh-bridge-ros2dds:${ZENOH_VERSION:-latest}
+    profiles: ["zenoh"]
+    container_name: robcoop-zenoh
+    network_mode: host
+    ipc: host
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-30}
+    command: ${ZENOH_ARGS:-}

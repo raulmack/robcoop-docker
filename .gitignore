@@ -1,0 +1,12 @@
+.env
+ws/build/
+ws/install/
+ws/log/
+# El repositorio de cada pareja se clona en ws/src/ y tiene su propio git
+ws/src/*
+!ws/src/turtlebot3_gz_bringup/
+!ws/src/.gitkeep
+# Informes generados en local
+informe_s0*.txt
+*.tgz
+robot/informe_*.txt

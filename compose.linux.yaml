@@ -1,0 +1,12 @@
+# =============================================================================
+#  Ajustes para Linux nativo (X11). Antes de arrancar:  xhost +local:docker
+# =============================================================================
+services:
+  ros:
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1

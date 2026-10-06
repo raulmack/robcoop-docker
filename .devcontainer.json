@@ -1,0 +1,26 @@
+{
+  // VS Code: "Dev Containers: Reopen in Container" desde la carpeta robcoop-docker
+  // (abierta en WSL con la extensión WSL). Usa el mismo compose que la terminal.
+  "name": "Robótica Cooperativa (ROS 2 Humble)",
+  "dockerComposeFile": ["compose.yaml", "compose.wsl.yaml"],
+  "service": "ros",
+  "workspaceFolder": "/home/ros/ws",
+  "remoteUser": "ros",
+  "shutdownAction": "none",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-vscode.cpptools",
+        "redhat.vscode-yaml",
+        "redhat.vscode-xml"
+      ],
+      "settings": {
+        "python.analysis.extraPaths": [
+          "/opt/ros/humble/lib/python3.10/site-packages",
+          "/opt/ros/humble/local/lib/python3.10/dist-packages"
+        ]
+      }
+    }
+  }
+}
