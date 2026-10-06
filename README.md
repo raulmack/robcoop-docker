@@ -178,6 +178,5 @@ robcoop-docker/
 ├── docker/                     receta de la imagen (Dockerfile, check_env…)
 ├── compose*.yaml, .env.example cómo se arranca el contenedor
 ├── ws/src/turtlebot3_gz_bringup  simulación multirrobot (Gazebo + RViz)
-├── robot/                      arranque de los robots reales (profesor)
-└── docs/PROFESOR.md            publicación, robots reales, Zenoh
+└── robot/                      arranque de los robots reales (profesor)
 ```
