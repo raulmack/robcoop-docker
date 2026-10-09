@@ -29,6 +29,9 @@ services:
       - LDS_MODEL=${LDS_MODEL:-LDS-01}
     volumes:
       - ./ws:/home/ros/ws
+      # El entorno de las terminales se lee del repositorio: los cambios llegan
+      # con ./robcoop.sh update sin tener que descargar una imagen nueva
+      - ./docker/ros_bashrc.sh:/etc/profile.d/ros_bashrc.sh:ro
 
   # ---------------------------------------------------------------------------
   # Puente Zenoh (solo Windows 10 o redes donde DDS no llega a los robots).
